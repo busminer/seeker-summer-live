@@ -1,16 +1,16 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const { getLiveState } = require('./lib/live-state');
 const root = __dirname;
 const port = Number(process.env.PORT || 4173);
-const mime = { '.html':'text/html; charset=utf-8', '.css':'text/css; charset=utf-8', '.js':'application/javascript; charset=utf-8', '.svg':'image/svg+xml', '.png':'image/png', '.jpg':'image/jpeg' };
+const mime = { '.html':'text/html; charset=utf-8', '.css':'text/css; charset=utf-8', '.js':'application/javascript; charset=utf-8', '.svg':'image/svg+xml', '.png':'image/png', '.jpg':'image/jpeg', '.webp':'image/webp' };
 
 http.createServer(async (req, res) => {
   if (req.url.startsWith('/api/state')) {
     try {
-      const upstream = await fetch('https://skrclaims.th3ryks.dev/api/state', { signal: AbortSignal.timeout(8000) });
-      const body = await upstream.text();
-      res.writeHead(upstream.status, { 'content-type':'application/json', 'cache-control':'no-store' });
+      const body = JSON.stringify(await getLiveState());
+      res.writeHead(200, { 'content-type':'application/json', 'cache-control':'no-store' });
       return res.end(body);
     } catch (error) {
       res.writeHead(502, { 'content-type':'application/json' });

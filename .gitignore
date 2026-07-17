@@ -6,7 +6,9 @@ node_modules/
 /desktop.png
 /mobile*.png
 /rendered.html
-/public/assets/
+/research-assets/
+/cinematic*.png
+/production.png
 
 .vercel
 /dist/

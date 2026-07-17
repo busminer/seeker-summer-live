@@ -7,3 +7,6 @@ node_modules/
 /mobile*.png
 /rendered.html
 /public/assets/
+
+.vercel
+/dist/

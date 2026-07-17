@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071923">
+  <meta name="description" content="A live, animated community visualization of SKR claims during Seeker Summer.">
+  <meta property="og:title" content="Seeker Summer — Live SKR Claim Run">
+  <meta property="og:description" content="Every real SKR claim sends another Seeker running into summer.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>Seeker Summer — Live SKR Claim Run</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Seeker Summer home">
+        <span class="sol-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>SEEKER<br><b>SUMMER</b></span>
+      </a>
+      <div class="top-actions">
+        <span class="live-pill" id="livePill"><i></i><span>CONNECTING</span></span>
+        <a class="round-pill" href="https://x.com/solanamobile/status/2078150285655175470" target="_blank" rel="noopener">ROUND 1 ↗</a>
+      </div>
+    </header>
+
+    <section class="world" aria-label="Live animated SKR claims">
+      <canvas id="worldCanvas"></canvas>
+      <div class="grain" aria-hidden="true"></div>
+
+      <div class="headline" aria-hidden="true">
+        <span>SEEKER</span>
+        <strong>SUMMER</strong>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat stat-main">
+          <span>CLAIMED</span>
+          <strong id="claimedValue">—</strong>
+          <small>SKR</small>
+        </div>
+        <div class="stat">
+          <span>SEEKERS IN</span>
+          <strong id="claimCountValue">—</strong>
+          <small>WALLETS</small>
+        </div>
+        <div class="stat">
+          <span>STILL OUT THERE</span>
+          <strong id="remainingValue">—</strong>
+          <small>SKR</small>
+        </div>
+      </div>
+
+      <div class="progress-wrap" aria-label="Claim progress">
+        <div class="progress-copy"><span>ROUND 1 VAULT</span><b id="percentValue">—%</b></div>
+        <div class="progress-track"><i id="progressBar"></i></div>
+      </div>
+
+      <div class="arrival-card" id="arrivalCard" aria-live="polite">
+        <span class="arrival-kicker">LATEST ARRIVAL</span>
+        <strong id="arrivalName">Waiting at the beach…</strong>
+        <span id="arrivalAmount">Live claims will appear here</span>
+      </div>
+
+      <button class="motion-button" id="motionButton" type="button" aria-pressed="false" aria-label="Pause animation">Ⅱ</button>
+    </section>
+
+    <section class="activity" aria-labelledby="activityTitle">
+      <div class="activity-head">
+        <div>
+          <span class="eyebrow">LIVE ON SOLANA</span>
+          <h1 id="activityTitle">Phones are running to summer.</h1>
+        </div>
+        <p>Each runner is a real confirmed SKR claim. Tap one to inspect the transaction.</p>
+      </div>
+      <div class="claim-feed" id="claimFeed" aria-live="polite">
+        <div class="feed-empty">Warming up the boardwalk…</div>
+      </div>
+    </section>
+
+    <footer>
+      <p>Independent community visualization — not affiliated with Solana Mobile.</p>
+      <nav>
+        <a href="https://solanamobile.com/blog/solana-mobile-heads-into-summer-with-new-apps-quests-and-builders" target="_blank" rel="noopener">Seeker Summer ↗</a>
+        <a href="https://solscan.io/account/5jhFXotkbKh78qbDnRdrhYpdK1b7KepG189QWBm7zuvA" target="_blank" rel="noopener">Campaign on Solscan ↗</a>
+        <a href="https://github.com/busminer/seeker-summer-live" target="_blank" rel="noopener">Source ↗</a>
+      </nav>
+    </footer>
+  </main>
+
+  <div class="error-toast" id="errorToast" role="status">Live feed reconnecting…</div>
+  <script src="/app.js" defer></script>
+</body>
+</html>

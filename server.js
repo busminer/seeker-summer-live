@@ -22,7 +22,8 @@ http.createServer(async (req, res) => {
   }
   const clean = decodeURIComponent(req.url.split('?')[0]);
   const relative = clean === '/' ? 'index.html' : clean.replace(/^\/+/, '');
-  const file = path.resolve(root, relative);
+  const servedRelative = relative.startsWith('assets/') ? path.join('public', relative) : relative;
+  const file = path.resolve(root, servedRelative);
   if (!file.startsWith(root) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
     res.writeHead(404); return res.end('Not found');
   }

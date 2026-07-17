@@ -11,7 +11,7 @@
   const TAU = Math.PI * 2, fmt = new Intl.NumberFormat('en-US'), reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const COLORS = { summer: '#58f3e4', staking: '#ffd166', pending: '#c54dff', pink: '#ff3f91', road: '#160d24' };
   const S = { w: 0, h: 0, dpr: 1, mouseX: 0, mouseY: 0, targetX: 0, targetY: 0, stars: [], buildings: [], palms: [], signals: [], queue: [], seen: new Set(), first: true, lastSpawn: 0, lastFetch: 0, labelBoxes: [], hitTargets: [] };
-  const billboard = new Image(); billboard.src = '/assets/official-seeker-detail.webp';
+  const billboard = new Image(); billboard.src = '/public/assets/official-seeker-detail.webp';
 
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const compactView = () => S.w < 700 || S.h < 520;

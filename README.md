@@ -1,24 +1,24 @@
 # Seeker Summer Live
 
-An independent animated community visualization of real SKR Round 1 claims during Solana Mobile's Seeker Summer.
+An independent animated community visualization of real SKR Round 1 claims during Seeker Summer.
 
-Every confirmed claim creates an anthropomorphic Seeker phone that runs across the summer boardwalk. The UI shows live campaign totals and links every arrival to its Solscan transaction.
+Every confirmed claim creates an anthropomorphic Seeker phone that runs from a Solana portal to the 25M SKR vault, claims its allocation, and joins the summer side. The monitor shows live totals and links every runner to its Solscan transaction.
 
 ## Architecture
 
 - Static HTML/CSS/Canvas 2D frontend
 - Vercel serverless proxy at `/api/state`
-- Live data sourced from the public SKR campaign monitor
-- Polling with transaction-signature deduplication
-- No wallet connection, keys, cookies, or user data collection
+- Live data sourced from the public SKR claim monitor
+- 3-second polling with transaction-signature deduplication
+- No wallet connection, keys, cookies, analytics, or user data collection
 
 ## Local development
 
-The API route requires a Vercel-compatible dev server. The visual frontend can also be previewed through any static server, but live data will need the proxy.
-
 ```bash
-npx vercel dev
+npm run dev
 ```
+
+Open `http://127.0.0.1:4173`.
 
 ## Disclaimer
 

@@ -1,14 +1,8 @@
 .vercel/
 node_modules/
-.DS_Store
+.npm-cache/
 *.log
-
-/desktop.png
-/mobile*.png
-/rendered.html
-/research-assets/
-/cinematic*.png
-/production.png
+.DS_Store
 
 .vercel
-/dist/
+.env*

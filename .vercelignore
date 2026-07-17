@@ -1,0 +1,6 @@
+.git/
+.npm-cache/
+.vercel/
+.env.local
+node_modules/
+*.log

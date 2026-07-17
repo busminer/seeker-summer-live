@@ -2,11 +2,10 @@
   "name": "seeker-summer-live",
   "version": "1.0.0",
   "private": true,
-  "description": "Live animated SKR claims during Seeker Summer",
+  "description": "A live animated community visualization of real SKR claims during Seeker Summer",
   "scripts": {
     "dev": "node server.js",
-    "build": "node build.js",
-    "check": "node --check app.js && node --check api/state.js && node --check server.js && node --check build.js"
+    "check": "node --check app.js && node --check api/state.js && node --check api/health.js && node --check server.js"
   },
-  "engines": { "node": "24.x" }
+  "engines": { "node": ">=20" }
 }

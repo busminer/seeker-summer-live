@@ -27,7 +27,7 @@ const CITY_X = mobile ? 11.2 : 13.5;
 const CITY_Z = -24;
 const fmt = new Intl.NumberFormat('en-US');
 const root = document.querySelector('#webgl');
-const ui = Object.fromEntries(['loader','loaderText','loaderBar','summerCount','stakingCount','pendingCount','summerMeter','stakingMeter','claimCount','claimed','staked','arrival','arrivalCity','arrivalName','arrivalAmount','status','fps','summerTotal','stakingTotal','onlineBadge','onlineCount'].map(id => [id, document.querySelector(`#${id}`)]));
+const ui = Object.fromEntries(['loader','loaderText','loaderBar','summerCount','stakingCount','pendingCount','summerMeter','stakingMeter','claimCount','claimed','staked','arrival','arrivalCity','arrivalName','arrivalAmount','status','fps','summerTotal','stakingTotal','onlineBadge','onlineCount','totalVisits'].map(id => [id, document.querySelector(`#${id}`)]));
 
 const W = {
   scene: null, camera: null, renderer: null, labels: null, composer: null, bloom: null,
@@ -80,7 +80,9 @@ async function heartbeatPresence() {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
     const online = Math.max(1, Math.floor(Number(data.online) || 0));
+    const totalVisits = Math.max(1, Math.floor(Number(data.totalVisits) || 0));
     ui.onlineCount.textContent = fmt.format(online);
+    ui.totalVisits.textContent = fmt.format(totalVisits);
     ui.onlineBadge.classList.add('visible');
   } catch (_) {
     ui.onlineBadge.classList.remove('visible');

@@ -1,8 +1,10 @@
 const crypto = require('crypto');
 
 const PRESENCE_KEY = 'seeker-summer:online';
+const VISITS_KEY = 'seeker-summer:visits';
 const WINDOW_MS = 45_000;
-const COOKIE = 'seeker_presence';
+const PRESENCE_COOKIE = 'seeker_presence';
+const VISIT_COOKIE = 'seeker_visit';
 
 function redisConfig() {
   return {
@@ -11,13 +13,13 @@ function redisConfig() {
   };
 }
 
-function sessionFrom(req, res) {
+function sessionFrom(req, name, maxAge, setCookies) {
   const cookie = String(req.headers.cookie || '');
-  const match = cookie.match(new RegExp(`(?:^|;\\s*)${COOKIE}=([a-f0-9-]{36})(?:;|$)`, 'i'));
+  const match = cookie.match(new RegExp(`(?:^|;\\s*)${name}=([a-f0-9-]{36})(?:;|$)`, 'i'));
   if (match) return match[1];
 
   const id = crypto.randomUUID();
-  res.setHeader('Set-Cookie', `${COOKIE}=${id}; Path=/; Max-Age=86400; HttpOnly; Secure; SameSite=Lax`);
+  setCookies.push(`${name}=${id}; Path=/; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`);
   return id;
 }
 
@@ -32,28 +34,36 @@ module.exports = async function handler(req, res) {
 
   try {
     const now = Date.now();
-    const session = sessionFrom(req, res);
+    const setCookies = [];
+    const session = sessionFrom(req, PRESENCE_COOKIE, 86400, setCookies);
+    const visit = sessionFrom(req, VISIT_COOKIE, 1800, setCookies);
+    if (setCookies.length) res.setHeader('Set-Cookie', setCookies);
     const script = `
       redis.call('ZADD', KEYS[1], ARGV[1], ARGV[2])
       redis.call('ZREMRANGEBYSCORE', KEYS[1], '-inf', ARGV[3])
       redis.call('EXPIRE', KEYS[1], 120)
-      return redis.call('ZCARD', KEYS[1])
+      local visitKey = KEYS[2] .. ':session:' .. ARGV[4]
+      if redis.call('SET', visitKey, '1', 'NX', 'EX', 1800) then
+        redis.call('INCR', KEYS[2])
+      end
+      return {redis.call('ZCARD', KEYS[1]), tonumber(redis.call('GET', KEYS[2]) or '0')}
     `;
     const response = await fetch(url.replace(/\/$/, ''), {
       method: 'POST',
       headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
-      body: JSON.stringify(['EVAL', script, '1', PRESENCE_KEY, now, session, now - WINDOW_MS]),
+      body: JSON.stringify(['EVAL', script, '2', PRESENCE_KEY, VISITS_KEY, now, session, now - WINDOW_MS, visit]),
       signal: AbortSignal.timeout(5000),
     });
 
     if (!response.ok) throw new Error(`Presence store ${response.status}`);
     const result = await response.json();
-    const online = Number(result?.result);
-    if (!Number.isFinite(online)) throw new Error('Invalid presence response');
+    const online = Number(result?.result?.[0]);
+    const totalVisits = Number(result?.result?.[1]);
+    if (!Number.isFinite(online) || !Number.isFinite(totalVisits)) throw new Error('Invalid presence response');
 
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('X-Content-Type-Options', 'nosniff');
-    return res.status(200).json({ online, windowSeconds: WINDOW_MS / 1000 });
+    return res.status(200).json({ online, totalVisits, windowSeconds: WINDOW_MS / 1000 });
   } catch (error) {
     res.setHeader('Cache-Control', 'no-store');
     return res.status(503).json({ error: 'Presence temporarily unavailable', detail: error.message });

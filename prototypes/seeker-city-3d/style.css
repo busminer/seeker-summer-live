@@ -213,6 +213,18 @@ body[data-camps-scope=alltime] .scope-win { display: none; }
 .world-status > i { width: 6px; height: 6px; }
 .world-status b { color: #f25386; }
 .instructions { position: absolute; z-index: 9; right: 28px; bottom: 52px; color: #d8bdcb; font: 700 9px/1 'DM Mono'; letter-spacing: .1em; text-shadow: 0 2px 8px rgba(0,0,0,.9); }
+.online-badge {
+  position: absolute; z-index: 10; right: 28px; bottom: 76px; display: flex; align-items: center; gap: 7px;
+  padding: 8px 11px; color: #eafffb; background: linear-gradient(145deg, rgba(18,48,51,.92), rgba(14,8,27,.9));
+  border: 1px solid rgba(127,232,217,.38); border-radius: 999px; box-shadow: 0 9px 26px rgba(4,16,21,.4), 0 0 18px rgba(127,232,217,.12);
+  backdrop-filter: blur(14px); opacity: 0; transform: translateY(5px); pointer-events: none;
+  transition: opacity .3s ease, transform .3s ease;
+}
+.online-badge.visible { opacity: 1; transform: translateY(0); }
+.online-badge i { width: 7px; height: 7px; border-radius: 50%; background: #7fe8d9; box-shadow: 0 0 11px #7fe8d9; animation: onlinePulse 1.7s ease-in-out infinite; }
+@keyframes onlinePulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .48; transform: scale(.78); } }
+.online-badge strong { font: 900 12px/1 'Archivo Black'; color: #fff; }
+.online-badge span { font: 700 8px/1 'DM Mono'; letter-spacing: .13em; color: #bff7ed; }
 
 /* ---------- phone labels (mobile + hover) ---------- */
 .phone-label {
@@ -307,6 +319,9 @@ body[data-camps-scope=alltime] .scope-win { display: none; }
   .world-status { right: max(8px, env(safe-area-inset-right)); bottom: max(14px, calc(env(safe-area-inset-bottom) + 2px)); max-width: 105px; justify-content: flex-end; text-align: right; font-size: 6px; }
   .world-status #fps, .world-status b { display: none; }
   .instructions { display: none; }
+  .online-badge { right: max(8px, env(safe-area-inset-right)); bottom: max(42px, calc(env(safe-area-inset-bottom) + 34px)); padding: 6px 9px; gap: 5px; }
+  .online-badge strong { font-size: 10px; }
+  .online-badge span { font-size: 6px; letter-spacing: .09em; }
 }
 @media (max-width: 760px) and (orientation: landscape) {
   .experience, #experience { min-height: 320px; }

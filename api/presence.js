@@ -5,6 +5,9 @@ const VISITS_KEY = 'seeker-summer:visits';
 const WINDOW_MS = 45_000;
 const PRESENCE_COOKIE = 'seeker_presence';
 const VISIT_COOKIE = 'seeker_visit';
+const localStats = globalThis.__seekerSummerVisitorStats || (globalThis.__seekerSummerVisitorStats = {
+  online: new Map(), visits: new Map(), totalVisits: 0,
+});
 
 function redisConfig() {
   return {
@@ -23,13 +26,36 @@ function sessionFrom(req, name, maxAge, setCookies) {
   return id;
 }
 
+function localSnapshot(session, visit, now) {
+  for (const [id, seenAt] of localStats.online) {
+    if (seenAt < now - WINDOW_MS) localStats.online.delete(id);
+  }
+  for (const [id, expiresAt] of localStats.visits) {
+    if (expiresAt <= now) localStats.visits.delete(id);
+  }
+
+  localStats.online.set(session, now);
+  if (!localStats.visits.has(visit)) {
+    localStats.visits.set(visit, now + 1_800_000);
+    localStats.totalVisits += 1;
+  }
+  return { online: localStats.online.size, totalVisits: localStats.totalVisits };
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { url, token } = redisConfig();
   if (!url || !token) {
+    const now = Date.now();
+    const setCookies = [];
+    const session = sessionFrom(req, PRESENCE_COOKIE, 86400, setCookies);
+    const visit = sessionFrom(req, VISIT_COOKIE, 1800, setCookies);
+    if (setCookies.length) res.setHeader('Set-Cookie', setCookies);
+    const snapshot = localSnapshot(session, visit, now);
     res.setHeader('Cache-Control', 'no-store');
-    return res.status(503).json({ error: 'Presence store is not configured' });
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    return res.status(200).json({ ...snapshot, windowSeconds: WINDOW_MS / 1000, approximate: true });
   }
 
   try {

@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-  <meta name="theme-color" content="#010102">
-  <meta name="description" content="Seeker Summer City — a living 3D world for every SKR claim.">
-  <title>Seeker Summer City — 3D Live World</title>
+  <meta name="theme-color" content="#1b0830">
+  <meta name="description" content="Seeker Summer — a living 3D golden-hour world for every SKR claim.">
+  <title>Seeker Summer — 3D Live World</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&family=Yellowtail&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./style.css">
   <script type="importmap">
     {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.179.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.179.1/examples/jsm/"}}
@@ -18,55 +18,61 @@
 </head>
 <body>
   <main id="experience">
-    <div id="webgl" aria-label="Live 3D Seeker Summer city"></div>
+    <div id="webgl" aria-label="Live 3D Seeker Summer world"></div>
     <div class="atmosphere" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
 
     <div id="loader" class="loader" role="status" aria-live="polite">
       <div class="loader-mark"><i></i><i></i><i></i></div>
-      <strong>ENTERING SEEKER CITY</strong>
-      <span id="loaderText">IGNITING THE HORIZON</span>
+      <strong>ENTERING SEEKER SUMMER</strong>
+      <span id="loaderText">WARMING UP THE SUN</span>
       <div class="loader-track"><i id="loaderBar"></i></div>
     </div>
 
     <header class="topbar">
       <div class="brand" aria-label="Solana Mobile">
-        <span class="sol-mark"><i></i><i></i><i></i></span>
+        <img class="sol-logo" src="./assets/solana-mobile.svg" alt="Solana Mobile logo" />
         <span><b>SOLANA</b><strong>MOBILE</strong></span>
       </div>
       <div class="world-title">
-        <small>WELCOME TO</small>
-        <b>SEEKER</b>
-        <strong>Summer City</strong>
+        <small>LIVE SKR CLAIMS</small>
+        <div class="title-row"><b>Seeker</b><strong>SUMMER</strong></div>
       </div>
-      <div class="live"><i></i><span>LIVE<br><b>SOLANA</b></span></div>
+      <div class="top-actions">
+        <button id="soundToggle" class="sound-toggle" type="button" aria-pressed="false" aria-label="Toggle ambient music" title="Ambient music">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M11 5 6 9H2v6h4l5 4V5z" fill="currentColor" stroke="none"></path>
+            <g class="sound-waves"><path d="M15.5 8.5a5 5 0 0 1 0 7"></path><path d="M18.5 5.5a9 9 0 0 1 0 13"></path></g>
+            <line class="sound-off" x1="15" y1="9" x2="21" y2="15"></line>
+            <line class="sound-off" x1="21" y1="9" x2="15" y2="15"></line>
+          </svg>
+        </button>
+        <div class="live"><i></i><span>LIVE<br><b>SOLANA</b></span></div>
+      </div>
     </header>
 
     <aside class="route-panel route-panel--summer" aria-label="Summer City statistics">
-      <div class="route-kicker"><i></i> CLAIM-ONLY DISTRICT</div>
+      <div class="route-kicker"><i></i> CLAIMED &amp; CHILLING</div>
       <strong>SUMMER<br>CITY</strong>
-      <div class="route-number"><b id="summerCount">—</b><span>CONFIRMED<br>IN LIVE WINDOW</span></div>
+      <div class="route-number"><b id="summerTotal">—</b><span>SKR<span class="scope-all"> · ALL TIME</span><span class="scope-win"> · LIVE WINDOW</span></span></div>
+      <div class="route-sub"><b id="summerCount">—</b> seekers in window</div>
       <div class="route-meter"><i id="summerMeter"></i></div>
-      <small>AQUA ROUTE · CLAIM RECEIVED</small>
+      <small>AQUA ROUTE · BEACH CLUB</small>
     </aside>
 
     <aside class="route-panel route-panel--staking" aria-label="Staking City statistics">
-      <div class="route-kicker"><i></i> LOCKED-IN DISTRICT</div>
+      <div class="route-kicker"><i></i> LOCKED &amp; WORKING</div>
       <strong>STAKING<br>CITY</strong>
-      <div class="route-number"><b id="stakingCount">—</b><span>CONFIRMED<br>IN LIVE WINDOW</span></div>
+      <div class="route-number"><b id="stakingTotal">—</b><span>SKR STAKED<span class="scope-all"> · ALL TIME</span><span class="scope-win"> · LIVE WINDOW</span></span></div>
+      <div class="route-sub"><b id="stakingCount">—</b> seekers in window</div>
       <div class="route-meter"><i id="stakingMeter"></i></div>
-      <small>SUNSET ROUTE · CLAIM + STAKE</small>
+      <small>GOLD ROUTE · THE VAULT</small>
     </aside>
 
     <section class="population" aria-label="Total Seeker Summer statistics">
       <small>GLOBAL SEEKER POPULATION</small>
-      <div><strong id="claimCount">—</strong><span>SEEKERS</span></div>
-      <em id="claimed">— SKR CLAIMED</em>
-    </section>
-
-    <section class="scanner" aria-label="Route scanner status">
-      <span class="scanner-icon"><i></i><i></i><i></i></span>
-      <div><small>ROUTE SCANNER PLAZA</small><strong><b id="pendingCount">—</b> signatures resolving</strong></div>
+      <div class="pop-row"><strong id="claimCount">—</strong><span>SEEKERS</span></div>
+      <div class="pop-claimed"><strong id="claimed">—</strong><span>SKR CLAIMED</span></div>
     </section>
 
     <aside id="arrival" class="arrival" data-route="summer" aria-live="polite">
@@ -74,9 +80,14 @@
       <div><small>NOW ENTERING <b id="arrivalCity">SUMMER CITY</b></small><strong id="arrivalName">Waiting for the next Seeker</strong><span id="arrivalAmount">LIVE ROUTES CONNECTED</span></div>
     </aside>
 
+    <div class="pending-pill" title="Signatures still resolving their route">
+      <i></i><span><b id="pendingCount">—</b> SCANNING</span>
+    </div>
+
     <div class="world-status"><i></i><span id="status">CONNECTING TO SOLANA</span><b>·</b><span id="fps">3D WORLD</span></div>
     <div class="instructions">MOVE TO LOOK · TAP A SEEKER FOR SOLSCAN</div>
   </main>
+  <script type="module" src="./audio.js"></script>
   <script type="module" src="./world.js"></script>
 </body>
 </html>

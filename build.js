@@ -8,7 +8,7 @@ const out = path.join(root, 'dist');
 fs.rmSync(out, { recursive: true, force: true });
 fs.mkdirSync(out, { recursive: true });
 
-for (const file of ['index.html', 'style.css', 'world.js']) {
+for (const file of ['index.html', 'style.css', 'world.js', 'audio.js']) {
   const from = path.join(source, file);
   if (!fs.existsSync(from)) throw new Error(`Missing production source: ${from}`);
   fs.copyFileSync(from, path.join(out, file));

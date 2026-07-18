@@ -70,9 +70,13 @@
     </aside>
 
     <section class="population" aria-label="Total Seeker Summer statistics">
-      <small>GLOBAL SEEKER POPULATION</small>
+      <div class="pop-heading"><i></i><small>GLOBAL SEEKER POPULATION</small></div>
       <div class="pop-row"><strong id="claimCount">—</strong><span>SEEKERS</span></div>
-      <div class="pop-claimed"><strong id="claimed">—</strong><span>SKR CLAIMED</span></div>
+      <div class="pop-split">
+        <div class="pop-stat pop-stat--claimed"><small>CLAIMED</small><strong id="claimed">—</strong><span>SKR</span></div>
+        <div class="pop-stat pop-stat--staked"><small>STAKED</small><strong id="staked">—</strong><span>SKR</span></div>
+      </div>
+      <div class="pop-foot">ALL-TIME VERIFIED ROUTES</div>
     </section>
 
     <aside id="arrival" class="arrival" data-route="summer" aria-live="polite">

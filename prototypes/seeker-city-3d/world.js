@@ -27,7 +27,7 @@ const CITY_X = mobile ? 11.2 : 13.5;
 const CITY_Z = -24;
 const fmt = new Intl.NumberFormat('en-US');
 const root = document.querySelector('#webgl');
-const ui = Object.fromEntries(['loader','loaderText','loaderBar','summerCount','stakingCount','pendingCount','summerMeter','stakingMeter','claimCount','claimed','arrival','arrivalCity','arrivalName','arrivalAmount','status','fps','summerTotal','stakingTotal'].map(id => [id, document.querySelector(`#${id}`)]));
+const ui = Object.fromEntries(['loader','loaderText','loaderBar','summerCount','stakingCount','pendingCount','summerMeter','stakingMeter','claimCount','claimed','staked','arrival','arrivalCity','arrivalName','arrivalAmount','status','fps','summerTotal','stakingTotal'].map(id => [id, document.querySelector(`#${id}`)]));
 
 const W = {
   scene: null, camera: null, renderer: null, labels: null, composer: null, bloom: null,
@@ -991,8 +991,12 @@ function odometer(el, key) {
   return odos[key];
 }
 function setOdometer(key, value) {
-  const o = odometer(ui[key === 'seekers' ? 'claimCount' : 'claimed'], key);
+  const el = ui[key];
+  if (!el) return;
+  const o = odometer(el, key);
   const str = fmt.format(Math.max(0, Math.floor(value)));
+  o.el.setAttribute('aria-label', str);
+  o.el.dataset.value = str;
   if (str.length !== o.len) {
     o.el.innerHTML = ''; o.cols = []; o.len = str.length;
     for (const ch of str) {
@@ -1044,22 +1048,17 @@ function applyState(data) {
   const camps = data.camps && Number.isFinite(data.camps.summer?.total) ? data.camps : null;
   const sTotal = camps ? camps.summer.total : winSummer;
   const kTotal = camps ? camps.staking.total : winStaking;
-  for (const [el, val] of [[ui.summerTotal, sTotal], [ui.stakingTotal, kTotal]]) {
-    if (!el) continue;
-    const txt = fmt.format(Math.floor(val));
-    if (el.textContent !== txt) {
-      el.textContent = txt;
-      el.animate([{ transform: 'scale(1.3)', filter: 'brightness(1.8)' }, { transform: 'scale(1)', filter: 'brightness(1)' }], { duration: 500, easing: 'cubic-bezier(.22,1,.3,1)' });
-    }
-  }
+  setOdometer('summerTotal', sTotal);
+  setOdometer('stakingTotal', kTotal);
+  setOdometer('claimCount', Number(data.claimCount) || 0);
+  setOdometer('claimed', sTotal);
+  setOdometer('staked', kTotal);
   // meter bars reflect the money split when camps exist (honest all-time), else counts
   if (camps && sTotal + kTotal > 0) {
     ui.summerMeter.style.width = `${sTotal / (sTotal + kTotal) * 100}%`;
     ui.stakingMeter.style.width = `${kTotal / (sTotal + kTotal) * 100}%`;
   }
   document.body.dataset.campsScope = camps ? 'alltime' : 'window';
-  setOdometer('seekers', Number(data.claimCount) || 0);
-  setOdometer('claimed', Number(data.claimed) || 0);
   const total = Math.max(0, Math.floor(Number(data.claimCount) || 0));
   if (total !== W.populationCount) buildPopulation(total);
   if (W.first) {

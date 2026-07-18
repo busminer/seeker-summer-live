@@ -1,5 +1,5 @@
 /* Seeker Summer — procedural golden-hour synthwave.
-   Pure WebAudio: no assets, no network. Starts only on user gesture.
+   Pure WebAudio: no assets, no network. Autoplay-first with gesture fallback.
    Mood: warm analog pads, soft sub bass, gentle pluck arp, wide space. */
 
 const state = {
@@ -155,7 +155,7 @@ function schedulerLoop() {
   }
 }
 
-export function toggleSummerSound() {
+function ensureSummerSoundStarted() {
   if (!state.started) {
     state.ctx = new (window.AudioContext || window.webkitAudioContext)();
     buildGraph();
@@ -163,14 +163,22 @@ export function toggleSummerSound() {
     state.nextStepTime = state.ctx.currentTime + 0.1;
     state.timerId = setInterval(schedulerLoop, 40);
   }
+}
+
+function setSummerSound(enabled) {
+  ensureSummerSoundStarted();
   const ctx = state.ctx;
-  if (ctx.state === 'suspended') ctx.resume();
-  state.on = !state.on;
+  if (enabled && ctx.state === 'suspended') ctx.resume().catch(() => {});
+  state.on = enabled;
   const now = ctx.currentTime;
   state.master.gain.cancelScheduledValues(now);
   state.master.gain.setValueAtTime(state.master.gain.value, now);
   state.master.gain.linearRampToValueAtTime(state.on ? 0.5 : 0, now + (state.on ? 1.6 : 0.5));
   return state.on;
+}
+
+export function toggleSummerSound() {
+  return setSummerSound(!state.on);
 }
 
 export function summerSoundOn() { return state.on; }
@@ -184,9 +192,29 @@ export function bindSummerSoundButton(btn) {
   });
 }
 
+function autoplaySummerSound(btn) {
+  const on = setSummerSound(true);
+  btn?.classList.toggle('on', on);
+  btn?.setAttribute('aria-pressed', on ? 'true' : 'false');
+
+  // Chrome/Safari may suspend WebAudio until the first interaction.
+  // Any gesture unlocks the already-enabled soundtrack; no speaker click required.
+  const unlock = () => {
+    if (state.on && state.ctx?.state === 'suspended') state.ctx.resume().catch(() => {});
+    for (const event of ['pointerdown', 'touchstart', 'keydown']) document.removeEventListener(event, unlock, true);
+  };
+  if (state.ctx?.state === 'suspended') {
+    for (const event of ['pointerdown', 'touchstart', 'keydown']) document.addEventListener(event, unlock, { capture: true, once: true });
+  }
+}
+
 // auto-bind if the button exists at import time
 if (typeof document !== 'undefined') {
-  const ready = () => bindSummerSoundButton(document.querySelector('#soundToggle'));
+  const ready = () => {
+    const button = document.querySelector('#soundToggle');
+    bindSummerSoundButton(button);
+    autoplaySummerSound(button);
+  };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready);
   else ready();
 }

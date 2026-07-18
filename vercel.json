@@ -5,7 +5,7 @@
   "outputDirectory": "dist",
   "functions": {
     "api/state.js": {
-      "includeFiles": ["data/route-cache.json"]
+      "includeFiles": "data/route-cache.json"
     }
   },
   "cleanUrls": true,
